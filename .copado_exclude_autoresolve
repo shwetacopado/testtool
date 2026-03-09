@@ -1,0 +1,6 @@
+**/classes/*.cls
+**/components/*.cls
+**/pages/*.cls
+**/triggers/*.cls
+**/aura/*.cls
+**/layouts/*.cls
