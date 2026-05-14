@@ -7,7 +7,7 @@ private class HelloWorldTest {
         HelloWorld.sayHello();
         Test.stopTest();
         
-        // No assertion possible for debug logsaa
+        // No assertion possible for debug logsaa11
         System.assert(true);
     }
 }
