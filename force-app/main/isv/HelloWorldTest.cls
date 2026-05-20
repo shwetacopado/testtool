@@ -7,7 +7,7 @@ private class HelloWorldTest {
         HelloWorld.sayHello();
         Test.stopTest();
         
-        // No assertion possible for debug logsssssss
+        // No assertion possible for debug logs
         System.assert(true);
     }
 }
