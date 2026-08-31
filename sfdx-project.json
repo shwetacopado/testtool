@@ -3,11 +3,7 @@
     {
       "path": "force-app",
       "default": true
-    },
-{
-"path": "force-app/main/isv",
-"default": false
-}
+    }
   ],
   "name": "project",
   "namespace": "",
