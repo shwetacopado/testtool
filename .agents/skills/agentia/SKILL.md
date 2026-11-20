@@ -13,17 +13,22 @@ Authentication must be configured before operational commands. Never print crede
 
 ## Copado workflow
 
-`list → get → set → (implement & git commit) → test → publish → submit [--done|--deploy]`
+Start with `agentia cicd workflow get --json` and honor its value (`local`, `cloud`, or unset).
 
-Read records before changing them and use IDs returned by Copado. Do not skip `work set` before coding; use one story per feature branch. Keep the working tree clean for lifecycle commands, and confirm promotion/deployment intent before `done`.
+- **Local:** `list → get → work set → (implement & git commit) → test → publish → submit [--done|--deploy]`
+- **Cloud:** `list → get → cloud set → (implement locally and push to the source org) → cloud commit → cloud promote [--deploy]`
+
+Read records before changing them and use IDs returned by Copado. Activate the story (`work set` locally or `cloud set` for cloud) before coding on that path; use one story per feature branch for local Git work. Keep the working tree clean for lifecycle commands, and confirm promotion/deployment intent before `done`.
 
 ## Agent Skills
 
 Use the applicable installed domain skill for detailed instructions:
 
-- `agentia-cicd`: Copado stories, commits, publish, submit, done, promotions, jobs, Functions, Job Templates, environments, pipelines, Slack notification configure, and data.
+- `agentia-cicd`: Copado stories, commits, publish, submit, done, promotions, jobs, Functions, Job Templates, git-hosted extensions, environments, credentials, projects, repositories, pipelines, Org Intelligence metadata explore, metadata index and dependency, Slack notification configure, and data.
 - `agentia-testing`: Copado Robotic Testing operations.
 - `agentia-ai`: Copado AI operations.
 - `agentia-adv`: advanced pipeline workflows.
 
 Project-specific instructions take precedence over managed Agentia skills. Refresh managed skills with `agentia setup skills update`; do not hand-edit managed files.
+
+For CLI upgrades, use `agentia update --check` (or `--check --json` for automation). Self-update runs `npm install --global` only from a global npm install; other layouts need `--force` or the manual npm command printed on failure. Behind TLS-inspecting proxies, `agentia update` retries the version check through `npm view` so npm `cafile`/proxy settings apply. After a successful update, run `agentia setup skills update` in each project.

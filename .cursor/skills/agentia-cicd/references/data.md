@@ -61,7 +61,7 @@ Never apply preview results without reviewing them first. Stop for user input wh
 2. Inspect the selected template and credentials.
 3. Prepare the data commit request in a JSON file.
 4. Run `data commit create --file <commit-request> --json`.
-5. If the response contains a JobExecution ID, inspect and monitor it using [jobs.md](jobs.md).
+5. If the response contains `jobExecution.id`, inspect and monitor it using [jobs.md](jobs.md).
 6. Confirm the commit is attached to the intended story with `data commit list <user-story-id> --json`.
 7. List generated artifacts with `data dataset-file list <data-commit-id> --json`.
 8. Fetch required content with `data dataset-file content <content-version-id>`.

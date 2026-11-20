@@ -77,6 +77,14 @@ $RECYCLE.BIN/
 #**/installedPackages/**
 #**/dashboards/**
 #**/reports/**
-.agentia/config.user.json
-.agentia/idex
-.agentia/apex.tests.*.json
+.agentia
+.agentia/**
+.agents
+settings.json
+.agentia
+.agents
+.claude
+.cursor
+.agentia_quality_gates.cmd
+.agentia_quality_gates.sh
+skills-lock.json
