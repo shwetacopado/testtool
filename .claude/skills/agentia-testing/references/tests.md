@@ -11,7 +11,7 @@ agentia auth set --crt <pak> --crt-domain <domain> --crt-org <organization-id>
 agentia auth get --crt --json
 ```
 
-Proceed only when the CRT credential entry reports `ready: true`. CRT commands resolve the configured CRT keychain context or supported `AGENTIA_CRT_*` process overrides. Do not pass PAKs in URLs or report them in output. Test14 is a CICD environment and is not a substitute for CRT credentials.
+Proceed only when the CRT credential entry reports `ready: true`. CRT commands resolve the configured CRT keychain context or supported `AGENTIA_TESTING_*` process overrides. Do not pass PAKs in URLs or report them in output. CICD credentials are not a substitute for CRT credentials.
 
 Use explicit `--project` and `--job` context. Agentia does not reproduce the legacy CLI's hidden active project/job selection.
 
@@ -26,7 +26,7 @@ Use explicit `--project` and `--job` context. Agentia does not reproduce the leg
 
 ```sh
 agentia testing project list --json
-agentia testing robot list --json
+agentia testing robot list --project <project-id> --json
 agentia testing job create --project <project-id> --robot <robot-id> --name "Smoke" --file tests/smoke.robot --json
 agentia testing job run <job-id> --project <project-id> --json
 agentia testing job runs get <build-id> --project <project-id> --job <job-id> --json
@@ -46,7 +46,7 @@ agentia testing job runs logs <build-id> --project <project-id> --job <job-id> -
 | Variables | `testing variable list|get|create|update|delete` |
 | User parameters | `testing user-parameter list|get|create|update|delete` |
 | Data tables | `testing data-table list|get|create|update|delete|export` |
-| Browser testing | `testing browser start|stop|status|execute|inspect|screenshot|reports|set-options|history|view|recorder` |
+| Browser testing | `testing browser start|stop|status|execute|inspect|screenshot|set-options|history|view|recorder` |
 
 `testing job` is the single namespace for test definitions and their runs. Commands directly under `job` take a job ID; `job runs get|logs|abort` take a build/run ID plus `--job`. On `testing job create` and `testing job update`, `--[no-]show-video-params` (`showVideoParams` in the API/MCP) enables or disables Video Streaming and Recording capabilities when running the test job. The older `testing create|update|status|logs|run`, `testing test ...`, `testing build ...`, and `testing job files|upload|download` forms are deprecated aliases that still execute but warn when used: `create` maps to `job create`, `update` to `job files upload` (file operations, not `job update`), `status`, `build list`, and `build latest` to `job runs list`, `build get` to `job runs get`, and `build search|logs|abort` to `job runs search|logs|abort`.
 

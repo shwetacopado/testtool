@@ -9,7 +9,7 @@ Use this reference for `agentia cicd promotion ...`, `agentia cicd promotion con
 | Command | Starts From | Use When |
 | --- | --- | --- |
 | `agentia cicd promotion run <promotion-id>` | Promotion ID | You already know the Promotion record and want explicit merge or merge-and-deploy control. |
-| `agentia cicd cloud promote [story-id]` | User Story | You want Agentia to resolve the story's Promotion before running it. |
+| `agentia cicd cloud promote [story-id]` | User Story | Resolve the story's Promotion before running; creates a forward Draft promotion and adds the story when none exists. |
 | `agentia cicd work submit --done` | Active User Story branch | The story is approved and should move to the next stage (Copado UI Submit promote). |
 
 Prefer `cloud promote` when the user talks about a story. Prefer `promotion run` when the user provides a Promotion ID.
@@ -19,17 +19,39 @@ Prefer `cloud promote` when the user talks about a story. Prefer `promotion run`
 | Command | Use For | Notes |
 | --- | --- | --- |
 | `promotion list` | Find promotions | Filter by `--work-id`, status, project, pipeline, source/destination environment, or back-promotion flags. |
-| `promotion get ID` | Inspect one promotion | Read this before running, resuming, or resolving conflicts. |
+| `promotion status ID` | Actionable run status | Prefer when the user asks "promotion status", what is running, or what is blocking. Includes user stories, current job step, queue, and Manual Task action-needed. MCP: `agentia_promotion_status`. |
+| `promotion get ID` | Inspect one promotion record | Read this before running, resuming, or resolving conflicts. Does not load job steps; use `promotion status` for blockers. |
 | `promotion run ID` | Preflight and submit a run | Requires `--operation merge` or `--operation merge_and_deploy` unless `--resume` is used. |
 | `promotion open ID` | Open in browser | CLI-only navigation helper. |
-| `cloud promote [ID]` | Story-centric run | Use `--deploy` for merge and deploy; use `--promotion-id` if the story has multiple promotions. |
+| `cloud promote [ID]` | Story-centric run | Use `--deploy` for merge and deploy; use `--promotion-id` if the story has multiple promotions (explicit ID is used as is and never creates one). JSON/MCP return `createdPromotion` when auto-created. |
+| `promotion job-step update ID` | Update a manual task step | Requires `-p` / `--promotion`. Set `--status`, assignee, or task text. MCP: `agentia_promotion_job_step_update`. |
+
+## Status Reports
+
+When the user asks about a promotion's progress or blockers, call `agentia cicd promotion status <id> --json` (or MCP `agentia_promotion_status`) and report **all** of:
+
+1. Promotion name/id and status (and Salesforce status when present).
+2. User stories involved (name and id).
+3. Current job and current step (name, status, type).
+4. Whether `actionNeeded.kind` is `manual_task` or `queue` — quote `actionNeeded.message` and tell the user they must act; do not say only "In Progress".
+5. Queue summary when present; call `promotion queue list` if they need item-level detail.
 
 Example:
 
 ```sh
 agentia cicd promotion list --work-id <story-id> --json
+agentia cicd promotion status <promotion-id> --json
 agentia cicd promotion run <promotion-id> --operation merge_and_deploy --json
 agentia cicd cloud promote <story-id> --deploy --json
+```
+
+## Ignored Metadata
+
+`promotion run` (`--ignored-metadata-json`), `cloud promote` (`--ignored-metadata-json`), and MCP `ignoredMetadata` take included-metadata rows. Read them from `includedMetadata` in `promotion get <promotion-id> --json` and pass the rows to ignore, each with `id` and `metadataApiName` or `name`. The list replaces the ignored metadata stored on the promotion and is saved before the run starts, so send the complete list you want.
+
+```sh
+agentia cicd promotion get <promotion-id> --json
+agentia cicd promotion run <promotion-id> --operation merge --ignored-metadata-json '[{"id":"<row-id>","metadataApiName":"<api-name>","type":"<type>"}]'
 ```
 
 ## Resume And Wait
@@ -61,7 +83,7 @@ List first and take item IDs from the output. Removal is destructive: confirm th
 
 ## Gotchas
 
-- Promotion IDs are not User Story IDs. Use `cloud promote` if you only have the story.
+- Promotion IDs are not User Story IDs. Use `cloud promote` if you only have the story; do not create the promotion manually first when none contains the story.
 - `--deploy` on `cloud promote` maps to promotion operation `merge_and_deploy`; without it, the default is merge only.
 - `--recreate-promotion-branch` is a sensitive run option and should be paired with explicit user intent and `--yes` when required.
 - If conflicts exist, resolve them first and then resume the same execution.
